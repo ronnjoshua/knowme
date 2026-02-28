@@ -1,4 +1,7 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 const skillCategories = [
   {
@@ -24,35 +27,101 @@ const skillCategories = [
 ];
 
 export function SkillsSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const categoryVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
+
+  const badgeVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+    },
+  };
+
   return (
-    <section id="skills" className="bg-muted/50 py-16 sm:py-24">
+    <section id="skills" className="bg-muted/50 py-16 sm:py-24 overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Skills & Technologies</h2>
           <p className="mb-12 text-lg text-muted-foreground">
             A diverse skill set spanning software development, automation, and engineering.
           </p>
-        </div>
-        <div className="mx-auto max-w-5xl">
+        </motion.div>
+
+        <motion.div
+          className="mx-auto max-w-5xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariants}
+        >
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {skillCategories.map((category) => (
-              <div key={category.title} className="space-y-4">
-                <h3 className="text-xl font-semibold text-center">{category.title}</h3>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {category.skills.map((skill) => (
-                    <Badge
+            {skillCategories.map((category, categoryIndex) => (
+              <motion.div
+                key={category.title}
+                className="space-y-4"
+                variants={categoryVariants}
+                custom={categoryIndex}
+              >
+                <motion.h3
+                  className="text-xl font-semibold text-center"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                >
+                  {category.title}
+                </motion.h3>
+                <motion.div
+                  className="flex flex-wrap justify-center gap-2"
+                  variants={containerVariants}
+                >
+                  {category.skills.map((skill, skillIndex) => (
+                    <motion.div
                       key={skill}
-                      variant="secondary"
-                      className="px-3 py-1 text-sm hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                      variants={badgeVariants}
+                      transition={{ delay: skillIndex * 0.05 }}
+                      whileHover={{
+                        scale: 1.1,
+                        y: -5,
+                        transition: { duration: 0.2 }
+                      }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      {skill}
-                    </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="px-3 py-1 text-sm cursor-default transition-colors hover:bg-primary hover:text-primary-foreground"
+                      >
+                        {skill}
+                      </Badge>
+                    </motion.div>
                   ))}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

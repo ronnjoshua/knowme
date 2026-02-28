@@ -1,5 +1,8 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
 
 const experiences = [
   {
@@ -51,50 +54,152 @@ const experiences = [
 ];
 
 export function ExperienceSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.6, ease: "easeOut" as const },
+    },
+  };
+
+  const dotVariants = {
+    hidden: { scale: 0 },
+    visible: {
+      scale: 1,
+      transition: { duration: 0.4, ease: "backOut" as const },
+    },
+  };
+
+  const listItemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+    },
+  };
+
   return (
-    <section id="experience" className="bg-muted/50 py-16 sm:py-24">
+    <section id="experience" className="bg-muted/50 py-16 sm:py-24 overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl text-center">
+        <motion.div
+          className="mx-auto max-w-3xl text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Work Experience</h2>
           <p className="mb-12 text-lg text-muted-foreground">
             My professional journey from Civil Engineering to Software Development.
           </p>
-        </div>
-        <div className="mx-auto max-w-4xl">
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-0 top-0 hidden h-full w-px bg-border md:left-8 md:block" />
+        </motion.div>
 
-            {experiences.map((exp) => (
-              <div key={exp.title + exp.company} className="relative mb-8 last:mb-0">
+        <div className="mx-auto max-w-4xl">
+          <motion.div
+            className="relative"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            {/* Animated Timeline line */}
+            <motion.div
+              className="absolute left-0 top-0 hidden h-full w-0.5 bg-gradient-to-b from-primary via-primary/50 to-primary/20 md:left-8 md:block"
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              style={{ originY: 0 }}
+            />
+
+            {experiences.map((exp, index) => (
+              <motion.div
+                key={exp.title + exp.company}
+                className="relative mb-8 last:mb-0"
+                variants={cardVariants}
+                custom={index}
+              >
                 <div className="md:flex">
                   {/* Timeline dot */}
-                  <div className="absolute left-0 hidden h-4 w-4 rounded-full border-4 border-background bg-primary md:left-8 md:block md:-translate-x-1/2 mt-6" />
+                  <motion.div
+                    className="absolute left-0 hidden h-4 w-4 rounded-full border-4 border-background bg-primary md:left-8 md:block md:-translate-x-1/2 mt-6 z-10"
+                    variants={dotVariants}
+                    whileHover={{ scale: 1.5 }}
+                  />
 
-                  <div className="md:pl-16 w-full">
-                    <Card>
+                  <motion.div
+                    className="md:pl-16 w-full"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/30">
                       <CardContent className="p-6">
                         <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <h3 className="text-lg font-semibold">{exp.title}</h3>
-                          <span className="text-sm text-muted-foreground whitespace-nowrap">{exp.period}</span>
+                          <motion.h3
+                            className="text-lg font-semibold"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                          >
+                            {exp.title}
+                          </motion.h3>
+                          <motion.span
+                            className="text-sm text-muted-foreground whitespace-nowrap px-3 py-1 bg-primary/10 rounded-full"
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            {exp.period}
+                          </motion.span>
                         </div>
                         <p className="mb-3 text-sm font-medium text-primary">{exp.company} | {exp.location}</p>
                         <Separator className="my-3" />
-                        <ul className="space-y-2">
-                          {exp.description.map((item, index) => (
-                            <li key={index} className="text-sm text-muted-foreground flex">
-                              <span className="mr-2 text-primary">•</span>
+                        <motion.ul
+                          className="space-y-2"
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ once: true }}
+                          variants={{
+                            visible: {
+                              transition: { staggerChildren: 0.1 },
+                            },
+                          }}
+                        >
+                          {exp.description.map((item, itemIndex) => (
+                            <motion.li
+                              key={itemIndex}
+                              className="text-sm text-muted-foreground flex"
+                              variants={listItemVariants}
+                            >
+                              <motion.span
+                                className="mr-2 text-primary"
+                                initial={{ scale: 0 }}
+                                whileInView={{ scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: itemIndex * 0.1 }}
+                              >
+                                •
+                              </motion.span>
                               <span>{item}</span>
-                            </li>
+                            </motion.li>
                           ))}
-                        </ul>
+                        </motion.ul>
                       </CardContent>
                     </Card>
-                  </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
