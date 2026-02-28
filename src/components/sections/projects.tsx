@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Github } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -11,6 +12,7 @@ const projects = [
     tags: ["Next.js", "React", "Tailwind CSS", "Vercel"],
     liveUrl: "https://real-estate-nhyu.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/real-estate",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=450&fit=crop&q=80",
   },
   {
     title: "RSVP Wedding Invitation",
@@ -18,13 +20,15 @@ const projects = [
     tags: ["React", "Web App", "RSVP System", "Vercel"],
     liveUrl: "https://rsvp-wedding-invitation-reservation.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/RSVP-Wedding-Invitation-Reservation-",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=450&fit=crop&q=80",
   },
   {
     title: "This Portfolio",
     description: "A modern, responsive portfolio built with Next.js 16, Tailwind CSS, and shadcn/ui featuring dark/light mode toggle, Resend email integration, and smooth animations.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui"],
-    liveUrl: "https://knowme.vercel.app",
+    liveUrl: "https://knowme-seven.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/knowme",
+    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop&q=80",
   },
 ];
 
@@ -42,8 +46,14 @@ export function ProjectsSection() {
           {projects.map((project) => (
             <Card key={project.title} className="group overflow-hidden transition-all hover:shadow-lg flex flex-col">
               <CardHeader className="p-0">
-                <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-primary/30">{project.title.charAt(0)}</span>
+                <div className="aspect-video relative overflow-hidden">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                 </div>
               </CardHeader>
               <CardContent className="p-6 flex-1">
