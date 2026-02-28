@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -17,8 +17,6 @@ import {
   SiApachekafka,
   SiJavascript,
   SiNodedotjs,
-  SiTailwindcss,
-  SiPostgresql,
 } from "react-icons/si";
 import { IconType } from "react-icons";
 
@@ -26,109 +24,90 @@ interface TechIcon {
   Icon: IconType;
   color: string;
   name: string;
+  position: [number, number, number];
+  speed: number;
+  floatIntensity: number;
 }
 
 const techIcons: TechIcon[] = [
-  { Icon: SiDocker, color: "#2496ED", name: "Docker" },
-  { Icon: SiKubernetes, color: "#326CE5", name: "Kubernetes" },
-  { Icon: SiAmazonwebservices, color: "#FF9900", name: "AWS" },
-  { Icon: SiPython, color: "#3776AB", name: "Python" },
-  { Icon: SiReact, color: "#61DAFB", name: "React" },
-  { Icon: SiTypescript, color: "#3178C6", name: "TypeScript" },
-  { Icon: SiNextdotjs, color: "#ffffff", name: "Next.js" },
-  { Icon: SiGit, color: "#F05032", name: "Git" },
-  { Icon: SiRedis, color: "#DC382D", name: "Redis" },
-  { Icon: SiApachekafka, color: "#231F20", name: "Kafka" },
-  { Icon: SiJavascript, color: "#F7DF1E", name: "JavaScript" },
-  { Icon: SiNodedotjs, color: "#339933", name: "Node.js" },
-  { Icon: SiTailwindcss, color: "#06B6D4", name: "Tailwind" },
-  { Icon: SiPostgresql, color: "#4169E1", name: "PostgreSQL" },
+  { Icon: SiDocker, color: "#2496ED", name: "Docker", position: [-4, 2, 0], speed: 1.5, floatIntensity: 1 },
+  { Icon: SiKubernetes, color: "#326CE5", name: "Kubernetes", position: [4, 1.5, 0], speed: 1.8, floatIntensity: 1.2 },
+  { Icon: SiAmazonwebservices, color: "#FF9900", name: "AWS", position: [-3, -1.5, 0], speed: 1.3, floatIntensity: 0.8 },
+  { Icon: SiPython, color: "#3776AB", name: "Python", position: [3.5, -2, 0], speed: 1.6, floatIntensity: 1.1 },
+  { Icon: SiReact, color: "#61DAFB", name: "React", position: [0, 3, 0], speed: 2, floatIntensity: 1.3 },
+  { Icon: SiTypescript, color: "#3178C6", name: "TypeScript", position: [-5, 0, 0], speed: 1.4, floatIntensity: 0.9 },
+  { Icon: SiNextdotjs, color: "#ffffff", name: "Next.js", position: [5, -0.5, 0], speed: 1.7, floatIntensity: 1 },
+  { Icon: SiGit, color: "#F05032", name: "Git", position: [-2, -3, 0], speed: 1.2, floatIntensity: 1.2 },
+  { Icon: SiRedis, color: "#DC382D", name: "Redis", position: [2, 2.5, 0], speed: 1.9, floatIntensity: 0.8 },
+  { Icon: SiApachekafka, color: "#231F20", name: "Kafka", position: [-4.5, -2.5, 0], speed: 1.5, floatIntensity: 1.1 },
+  { Icon: SiJavascript, color: "#F7DF1E", name: "JavaScript", position: [4.5, 2.5, 0], speed: 1.6, floatIntensity: 1 },
+  { Icon: SiNodedotjs, color: "#339933", name: "Node.js", position: [-1, 2, 0], speed: 1.4, floatIntensity: 1.2 },
 ];
 
-function FloatingIcon({
-  icon,
-  position,
-  speed = 1,
-  rotationSpeed = 1,
-  floatIntensity = 1
-}: {
-  icon: TechIcon;
-  position: [number, number, number];
-  speed?: number;
-  rotationSpeed?: number;
-  floatIntensity?: number;
-}) {
-  const groupRef = useRef<THREE.Group>(null);
-  const initialRotation = useMemo(() => Math.random() * Math.PI * 2, []);
+function FloatingIcon({ icon }: { icon: TechIcon }) {
+  const meshRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = initialRotation + state.clock.elapsedTime * 0.3 * rotationSpeed;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+    if (meshRef.current) {
+      meshRef.current.position.y = icon.position[1] + Math.sin(state.clock.elapsedTime * icon.speed) * 0.3 * icon.floatIntensity;
+      meshRef.current.position.x = icon.position[0] + Math.cos(state.clock.elapsedTime * icon.speed * 0.5) * 0.1;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
     }
   });
 
   return (
-    <Float
-      speed={speed * 2}
-      rotationIntensity={0.5}
-      floatIntensity={floatIntensity * 2}
-    >
-      <group ref={groupRef} position={position}>
-        <Html
-          transform
-          distanceFactor={8}
+    <group ref={meshRef} position={icon.position}>
+      <Html
+        center
+        distanceFactor={10}
+        style={{ pointerEvents: 'none' }}
+        zIndexRange={[0, 0]}
+      >
+        <div
+          className="flex items-center justify-center p-3 rounded-xl bg-background/90 backdrop-blur-md border border-primary/30 shadow-lg"
           style={{
-            transition: 'all 0.3s',
-            pointerEvents: 'none',
+            boxShadow: `0 0 25px ${icon.color}50, 0 0 50px ${icon.color}20`,
           }}
         >
-          <div
-            className="flex items-center justify-center p-3 rounded-xl bg-background/80 backdrop-blur-sm border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300"
-            style={{
-              boxShadow: `0 0 20px ${icon.color}40`,
-            }}
-          >
-            <icon.Icon
-              className="w-8 h-8 sm:w-10 sm:h-10"
-              style={{ color: icon.color }}
-            />
-          </div>
-        </Html>
-      </group>
-    </Float>
+          <icon.Icon
+            className="w-7 h-7 sm:w-8 sm:h-8"
+            style={{ color: icon.color }}
+          />
+        </div>
+      </Html>
+    </group>
   );
 }
 
-function Particles({ count = 80 }: { count?: number }) {
+function Particles() {
   const pointsRef = useRef<THREE.Points>(null);
+  const count = 60;
 
   const particles = useMemo(() => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 25;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 25;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+      positions[i * 3] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 5;
     }
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     return geometry;
-  }, [count]);
+  }, []);
 
   useFrame((state) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.015;
-      pointsRef.current.rotation.x = state.clock.elapsedTime * 0.01;
+      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
     }
   });
 
   return (
     <points ref={pointsRef} geometry={particles}>
       <pointsMaterial
-        size={0.04}
+        size={0.05}
         color="#8b5cf6"
         transparent
-        opacity={0.5}
+        opacity={0.4}
         sizeAttenuation
       />
     </points>
@@ -136,53 +115,35 @@ function Particles({ count = 80 }: { count?: number }) {
 }
 
 function Scene() {
-  // Distribute icons in a spherical pattern
-  const iconPositions: [number, number, number][] = useMemo(() => [
-    [-4, 2, -2],
-    [4, 1.5, -1],
-    [-3, -1.5, -3],
-    [3.5, -2, -2],
-    [0, 3, -4],
-    [-5, 0, -2],
-    [5, -0.5, -3],
-    [-2, -3, -2],
-    [2, 2.5, -3],
-    [-4.5, -2.5, -1],
-    [4.5, 2.5, -2],
-    [-1, -2, -4],
-    [1, 1, -5],
-    [3, -3, -1],
-  ], []);
-
   return (
     <>
-      <ambientLight intensity={0.8} />
-      <pointLight position={[10, 10, 10]} intensity={0.5} />
-      <pointLight position={[-10, -10, -10]} intensity={0.3} color="#8b5cf6" />
-
-      {techIcons.map((icon, index) => (
-        <FloatingIcon
-          key={icon.name}
-          icon={icon}
-          position={iconPositions[index]}
-          speed={0.8 + Math.random() * 0.4}
-          rotationSpeed={0.5 + Math.random() * 0.5}
-          floatIntensity={0.8 + Math.random() * 0.4}
-        />
+      <ambientLight intensity={1} />
+      {techIcons.map((icon) => (
+        <FloatingIcon key={icon.name} icon={icon} />
       ))}
-
-      <Particles count={100} />
+      <Particles />
     </>
   );
 }
 
 export function FloatingShapes() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <div className="absolute inset-0 -z-10">
+    <div className="absolute inset-0 -z-10 overflow-hidden">
       <Canvas
-        camera={{ position: [0, 0, 10], fov: 50 }}
+        camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ background: "transparent" }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
+        gl={{ antialias: true, alpha: true }}
       >
         <Scene />
       </Canvas>
