@@ -38,6 +38,7 @@ export function ContactSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -47,16 +48,33 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
+      const data = await response.json();
 
-    // Reset success message after 5 seconds
-    setTimeout(() => setSubmitted(false), 5000);
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setSubmitted(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+
+      // Reset success message after 5 seconds
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -171,6 +189,11 @@ export function ContactSection() {
                           required
                         />
                       </div>
+                      {error && (
+                        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
+                          {error}
+                        </div>
+                      )}
                       <Button type="submit" className="w-full" disabled={isSubmitting}>
                         {isSubmitting ? "Sending..." : "Send Message"}
                       </Button>
