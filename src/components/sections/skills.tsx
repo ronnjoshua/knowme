@@ -2,16 +2,24 @@ import { Badge } from "@/components/ui/badge";
 
 const skillCategories = [
   {
-    title: "Frontend",
-    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "HTML/CSS", "JavaScript"],
+    title: "Web Development",
+    skills: ["Python", "Odoo 16/17", "JavaScript", "HTML5/CSS3", "PHP", "React", "Laravel", "CodeIgniter"],
   },
   {
-    title: "Backend",
-    skills: ["Node.js", "Express", "Python", "PostgreSQL", "MongoDB", "REST APIs"],
+    title: "Automation & APIs",
+    skills: ["n8n", "REST APIs", "HubSpot API", "Webflow API", "WordPress API", "Typeform", "Reply.io API", "OrderTime API"],
   },
   {
-    title: "Tools & Others",
-    skills: ["Git", "Docker", "AWS", "Vercel", "Figma", "VS Code"],
+    title: "AI & Tools",
+    skills: ["Claude", "ChatGPT", "Git", "GitHub", "Cloudflare", "GCP"],
+  },
+  {
+    title: "Cybersecurity",
+    skills: ["Kali Linux", "Nmap", "Wireshark", "Metasploit", "Network Security", "Penetration Testing"],
+  },
+  {
+    title: "Engineering Software",
+    skills: ["STAAD Pro", "ETABS 19", "AutoCAD 2D/3D", "SketchUp Pro", "Primavera P6", "MS Project"],
   },
 ];
 
@@ -22,11 +30,11 @@ export function SkillsSection() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Skills & Technologies</h2>
           <p className="mb-12 text-lg text-muted-foreground">
-            Here are the technologies and tools I work with on a daily basis.
+            A diverse skill set spanning software development, automation, and engineering.
           </p>
         </div>
-        <div className="mx-auto max-w-4xl">
-          <div className="grid gap-8 md:grid-cols-3">
+        <div className="mx-auto max-w-5xl">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {skillCategories.map((category) => (
               <div key={category.title} className="space-y-4">
                 <h3 className="text-xl font-semibold text-center">{category.title}</h3>

@@ -9,16 +9,17 @@ export function HeroSection() {
       <div className="container mx-auto text-center">
         <div className="mx-auto max-w-3xl">
           <p className="mb-4 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-            Welcome to my portfolio
+            Odoo Developer | Licensed Civil Engineer
           </p>
           <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             Hi, I&apos;m{" "}
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Your Name
+              Ronn Joshua
             </span>
           </h1>
           <p className="mb-8 text-lg text-muted-foreground sm:text-xl md:text-2xl">
-            A passionate developer crafting beautiful and functional digital experiences.
+            Results-driven developer with dual expertise in Software Development and Civil Engineering.
+            Specializing in Odoo implementation, API integrations, and workflow automation.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild size="lg">
@@ -30,7 +31,7 @@ export function HeroSection() {
           </div>
           <div className="mt-8 flex items-center justify-center space-x-4">
             <Link
-              href="https://github.com"
+              href="https://github.com/ronnjoshua"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -38,7 +39,7 @@ export function HeroSection() {
               <Github className="h-6 w-6" />
             </Link>
             <Link
-              href="https://linkedin.com"
+              href="https://ph.linkedin.com/in/ronn-joshua-nucup-a99348216"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -46,7 +47,7 @@ export function HeroSection() {
               <Linkedin className="h-6 w-6" />
             </Link>
             <Link
-              href="mailto:hello@example.com"
+              href="mailto:Nucup53@gmail.com"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <Mail className="h-6 w-6" />

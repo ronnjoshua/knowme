@@ -12,19 +12,19 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    value: "hello@example.com",
-    href: "mailto:hello@example.com",
+    value: "Nucup53@gmail.com",
+    href: "mailto:Nucup53@gmail.com",
   },
   {
     icon: Phone,
     title: "Phone",
-    value: "+1 (555) 123-4567",
-    href: "tel:+15551234567",
+    value: "+63 968-578-2762",
+    href: "tel:+639685782762",
   },
   {
     icon: MapPin,
     title: "Location",
-    value: "San Francisco, CA",
+    value: "Makati City, Philippines",
     href: null,
   },
 ];

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio | Professional Developer",
-  description: "Professional portfolio showcasing my skills, projects, and experience as a developer.",
+  title: "Ronn Joshua Nucup | Odoo Developer & Licensed Civil Engineer",
+  description: "Results-driven developer with dual expertise in Software Development and Civil Engineering. Specializing in Odoo implementation, API integrations, and workflow automation.",
 };
 
 export default function RootLayout({

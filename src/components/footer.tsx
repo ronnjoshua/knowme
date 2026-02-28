@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 const socialLinks = [
-  { href: "https://github.com", icon: Github, label: "GitHub" },
-  { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://twitter.com", icon: Twitter, label: "Twitter" },
-  { href: "mailto:hello@example.com", icon: Mail, label: "Email" },
+  { href: "https://github.com/ronnjoshua", icon: Github, label: "GitHub" },
+  { href: "https://ph.linkedin.com/in/ronn-joshua-nucup-a99348216", icon: Linkedin, label: "LinkedIn" },
+  { href: "mailto:Nucup53@gmail.com", icon: Mail, label: "Email" },
 ];
 
 export function Footer() {
@@ -14,7 +13,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Portfolio. All rights reserved.
+            &copy; {new Date().getFullYear()} Ronn Joshua Nucup. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
             {socialLinks.map((link) => (

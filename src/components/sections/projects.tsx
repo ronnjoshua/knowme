@@ -6,28 +6,46 @@ import { Button } from "@/components/ui/button";
 
 const projects = [
   {
-    title: "E-Commerce Platform",
-    description: "A full-featured online store with cart functionality, payment integration, and admin dashboard.",
-    image: "/placeholder-project.jpg",
-    tags: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com",
+    title: "OrderTime API Integration",
+    description: "Engineered a seamless API integration using Python and GCP, connecting OrderTime with business systems to reduce manual data entry time by 65% while achieving 100% system uptime.",
+    tags: ["Python", "GCP", "REST API", "Odoo"],
+    liveUrl: null,
+    githubUrl: "https://github.com/ronnjoshua",
   },
   {
-    title: "Task Management App",
-    description: "A collaborative task management tool with real-time updates and team features.",
-    image: "/placeholder-project.jpg",
-    tags: ["React", "Node.js", "Socket.io", "MongoDB"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com",
+    title: "Custom Odoo Modules",
+    description: "Developed 3 custom Odoo modules using Python and XML, implementing tailored business logic that resulted in 40% improvement in user engagement and streamlined operations.",
+    tags: ["Odoo 16/17", "Python", "XML", "ERP"],
+    liveUrl: null,
+    githubUrl: "https://github.com/ronnjoshua",
   },
   {
-    title: "Portfolio Website",
-    description: "A modern portfolio website built with Next.js and Tailwind CSS.",
-    image: "/placeholder-project.jpg",
-    tags: ["Next.js", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com",
+    title: "n8n Automation Workflows",
+    description: "Built comprehensive automation workflows orchestrating integrations across Reply.io, Webflow, Typeform, HubSpot, and WordPress APIs, reducing repetitive tasks by 50%.",
+    tags: ["n8n", "HubSpot API", "Webflow API", "Automation"],
+    liveUrl: null,
+    githubUrl: "https://github.com/ronnjoshua",
+  },
+  {
+    title: "Website Redesign & Migration",
+    description: "Led complete website redesign and database migration for a major client, ensuring zero data loss while reducing page load time by 60% through Cloudflare optimization.",
+    tags: ["Cloudflare", "Database Migration", "SEO", "Performance"],
+    liveUrl: null,
+    githubUrl: "https://github.com/ronnjoshua",
+  },
+  {
+    title: "SEO Optimization Project",
+    description: "Executed comprehensive SEO optimization strategies using Ahrefs and ScreamingFrog, achieving 60% increase in organic traffic and 20% improvement in search rankings.",
+    tags: ["SEO", "Ahrefs", "ScreamingFrog", "Analytics"],
+    liveUrl: null,
+    githubUrl: "https://github.com/ronnjoshua",
+  },
+  {
+    title: "This Portfolio",
+    description: "A modern, responsive portfolio built with Next.js 16, Tailwind CSS, and shadcn/ui featuring dark/light mode toggle and smooth animations.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui"],
+    liveUrl: "https://knowme.vercel.app",
+    githubUrl: "https://github.com/ronnjoshua/knowme",
   },
 ];
 
@@ -38,18 +56,18 @@ export function ProjectsSection() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Featured Projects</h2>
           <p className="mb-12 text-lg text-muted-foreground">
-            Here are some of my recent projects that showcase my skills and experience.
+            A selection of projects showcasing my expertise in development, automation, and optimization.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
-            <Card key={project.title} className="group overflow-hidden transition-all hover:shadow-lg">
+            <Card key={project.title} className="group overflow-hidden transition-all hover:shadow-lg flex flex-col">
               <CardHeader className="p-0">
-                <div className="aspect-video bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground text-sm">Project Image</span>
+                <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-primary/30">{project.title.charAt(0)}</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex-1">
                 <h3 className="mb-2 text-xl font-semibold">{project.title}</h3>
                 <p className="mb-4 text-sm text-muted-foreground">{project.description}</p>
                 <div className="flex flex-wrap gap-2">
@@ -68,12 +86,14 @@ export function ProjectsSection() {
                       Code
                     </Link>
                   </Button>
-                  <Button asChild size="sm">
-                    <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      Live Demo
-                    </Link>
-                  </Button>
+                  {project.liveUrl && (
+                    <Button asChild size="sm">
+                      <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Live
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </CardFooter>
             </Card>

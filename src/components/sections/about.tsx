@@ -1,21 +1,21 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Code2, Palette, Rocket } from "lucide-react";
+import { Code2, Cpu, Workflow } from "lucide-react";
 
 const highlights = [
   {
     icon: Code2,
-    title: "Clean Code",
-    description: "Writing maintainable, scalable, and efficient code that stands the test of time.",
+    title: "Odoo Development",
+    description: "Building custom Odoo modules using Python and XML, delivering tailored ERP solutions that improve business efficiency.",
   },
   {
-    icon: Palette,
-    title: "UI/UX Design",
-    description: "Creating intuitive and visually appealing interfaces that users love.",
+    icon: Workflow,
+    title: "API Integration",
+    description: "Orchestrating seamless integrations across platforms like HubSpot, Webflow, and WordPress using n8n automation.",
   },
   {
-    icon: Rocket,
-    title: "Performance",
-    description: "Optimizing applications for speed and delivering exceptional user experiences.",
+    icon: Cpu,
+    title: "AI-Powered Solutions",
+    description: "Leveraging AI tools like Claude and ChatGPT to optimize workflows and deliver innovative client-facing solutions.",
   },
 ];
 
@@ -25,10 +25,16 @@ export function AboutSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">About Me</h2>
+          <p className="mb-6 text-lg text-muted-foreground">
+            Results-driven professional with dual expertise in Civil Engineering and Software Development.
+            Licensed Civil Engineer with 2 years of construction management experience, successfully
+            transitioning into software development with proven expertise in Odoo implementation and
+            API-driven automation.
+          </p>
           <p className="mb-12 text-lg text-muted-foreground">
-            I&apos;m a full-stack developer with a passion for building modern web applications.
-            With years of experience in the industry, I specialize in creating responsive,
-            user-friendly applications using cutting-edge technologies.
+            Skilled at creating scalable automation workflows with n8n, integrating multiple SaaS platforms,
+            and leveraging AI tools to boost efficiency. Demonstrated track record of reducing development
+            time by 40% through automation and improving website performance by 60% through optimization techniques.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

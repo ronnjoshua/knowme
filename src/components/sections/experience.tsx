@@ -3,22 +3,50 @@ import { Separator } from "@/components/ui/separator";
 
 const experiences = [
   {
-    title: "Senior Frontend Developer",
-    company: "Tech Company Inc.",
-    period: "2022 - Present",
-    description: "Leading the frontend team in building scalable web applications using React and Next.js. Implemented CI/CD pipelines and improved performance by 40%.",
+    title: "Software Developer / Odoo Developer",
+    company: "Better Business Group Inc.",
+    location: "Makati City",
+    period: "Aug 2023 - Dec 2025",
+    description: [
+      "Engineered OrderTime API integration using Python and GCP, reducing manual data entry by 65%",
+      "Developed 3 custom Odoo modules resulting in 40% improvement in user engagement",
+      "Built automation workflows with n8n across Reply.io, Webflow, HubSpot, reducing repetitive tasks by 50%",
+      "Led website redesign and database migration with zero data loss, reducing page load time by 60%",
+      "Executed SEO optimization achieving 60% increase in organic traffic",
+    ],
   },
   {
-    title: "Full Stack Developer",
-    company: "Digital Agency",
-    period: "2020 - 2022",
-    description: "Developed and maintained multiple client projects using React, Node.js, and PostgreSQL. Collaborated with designers to implement pixel-perfect UIs.",
+    title: "Project Engineer",
+    company: "Department of Environment and Natural Resources",
+    location: "Los Banos, Laguna",
+    period: "Feb 2023 - Jun 2023",
+    description: [
+      "Supervised installation of 15+ trash traps, achieving 85% reduction in waterway pollution",
+      "Coordinated with 14+ government agencies maintaining 100% compliance with regulations",
+      "Completed 30+ technical assessments and monitoring reports",
+    ],
   },
   {
-    title: "Junior Developer",
-    company: "Startup Labs",
-    period: "2018 - 2020",
-    description: "Started my professional journey building web applications. Gained experience in JavaScript, React, and modern web development practices.",
+    title: "Site Engineer",
+    company: "Briobuild Co.",
+    location: "Pasig City",
+    period: "Aug 2022 - Feb 2023",
+    description: [
+      "Supervised team of 30+ construction workers and 5 sub-contractors",
+      "Implemented quality control measures resulting in 70% reduction in rework",
+      "Achieved zero safety incidents through strict adherence to safety protocols",
+    ],
+  },
+  {
+    title: "Design Engineer",
+    company: "Building Takeoffs Limited",
+    location: "Ayala",
+    period: "Aug 2021 - Jan 2022",
+    description: [
+      "Designed structural elements for 20+ residential projects (150-500 sq.m.)",
+      "Produced BOQs and BOMs with 98% accuracy rate",
+      "Reduced estimation time by 35% through software optimization",
+    ],
   },
 ];
 
@@ -29,30 +57,37 @@ export function ExperienceSection() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Work Experience</h2>
           <p className="mb-12 text-lg text-muted-foreground">
-            My professional journey and the companies I&apos;ve had the pleasure to work with.
+            My professional journey from Civil Engineering to Software Development.
           </p>
         </div>
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-4xl">
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-0 top-0 hidden h-full w-px bg-border md:left-1/2 md:block md:-translate-x-1/2" />
+            <div className="absolute left-0 top-0 hidden h-full w-px bg-border md:left-8 md:block" />
 
-            {experiences.map((exp, index) => (
-              <div key={exp.title} className="relative mb-8 last:mb-0">
-                <div className={`md:flex md:items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+            {experiences.map((exp) => (
+              <div key={exp.title + exp.company} className="relative mb-8 last:mb-0">
+                <div className="md:flex">
                   {/* Timeline dot */}
-                  <div className="absolute left-0 hidden h-4 w-4 rounded-full border-4 border-background bg-primary md:left-1/2 md:block md:-translate-x-1/2" />
+                  <div className="absolute left-0 hidden h-4 w-4 rounded-full border-4 border-background bg-primary md:left-8 md:block md:-translate-x-1/2 mt-6" />
 
-                  <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pl-8' : 'md:pr-8'}`}>
+                  <div className="md:pl-16 w-full">
                     <Card>
                       <CardContent className="p-6">
-                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <h3 className="text-lg font-semibold">{exp.title}</h3>
-                          <span className="text-sm text-muted-foreground">{exp.period}</span>
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">{exp.period}</span>
                         </div>
-                        <p className="mb-2 text-sm font-medium text-primary">{exp.company}</p>
+                        <p className="mb-3 text-sm font-medium text-primary">{exp.company} | {exp.location}</p>
                         <Separator className="my-3" />
-                        <p className="text-sm text-muted-foreground">{exp.description}</p>
+                        <ul className="space-y-2">
+                          {exp.description.map((item, index) => (
+                            <li key={index} className="text-sm text-muted-foreground flex">
+                              <span className="mr-2 text-primary">•</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </CardContent>
                     </Card>
                   </div>
