@@ -5,6 +5,7 @@ import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { scrollToSection } from "@/lib/scroll";
 
 const roles = [
   "Odoo Developer",
@@ -159,21 +160,27 @@ export function HeroSection() {
             variants={itemVariants}
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button asChild size="lg" className="relative overflow-hidden group">
-                <Link href="#contact">
-                  <span className="relative z-10">Get in Touch</span>
-                  <motion.div
-                    className="absolute inset-0 bg-primary-foreground/10"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.5 }}
-                  />
-                </Link>
+              <Button
+                size="lg"
+                className="relative overflow-hidden group"
+                onClick={() => scrollToSection("contact")}
+              >
+                <span className="relative z-10">Get in Touch</span>
+                <motion.div
+                  className="absolute inset-0 bg-primary-foreground/10"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.5 }}
+                />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button asChild variant="outline" size="lg">
-                <Link href="#projects">View Projects</Link>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => scrollToSection("projects")}
+              >
+                View Projects
               </Button>
             </motion.div>
           </motion.div>
@@ -214,14 +221,17 @@ export function HeroSection() {
         variants={floatingVariants}
         animate="animate"
       >
-        <Link href="#about" className="text-muted-foreground hover:text-primary transition-colors">
+        <button
+          onClick={() => scrollToSection("about")}
+          className="text-muted-foreground hover:text-primary transition-colors"
+        >
           <motion.div
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
           >
             <ArrowDown className="h-6 w-6" />
           </motion.div>
-        </Link>
+        </button>
       </motion.div>
     </section>
   );

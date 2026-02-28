@@ -6,17 +6,23 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { scrollToSection } from "@/lib/scroll";
 
 const navItems = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+  { id: "about", label: "About" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "contact", label: "Contact" },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
+
+  const handleNavClick = (sectionId: string) => {
+    scrollToSection(sectionId);
+    setOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -28,13 +34,13 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.id)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {item.label}
-            </Link>
+            </button>
           ))}
           <ThemeToggle />
         </nav>
@@ -52,14 +58,13 @@ export function Header() {
             <SheetContent side="right" className="w-[300px]">
               <nav className="flex flex-col space-y-4 mt-8">
                 {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground"
-                    onClick={() => setOpen(false)}
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground text-left"
                   >
                     {item.label}
-                  </Link>
+                  </button>
                 ))}
               </nav>
             </SheetContent>
