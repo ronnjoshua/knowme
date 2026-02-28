@@ -1,32 +1,131 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import {
+  SiDocker,
+  SiKubernetes,
+  SiAmazonwebservices,
+  SiApachekafka,
+  SiRedis,
+  SiElasticsearch,
+  SiCeph,
+  SiPython,
+  SiJavascript,
+  SiHtml5,
+  SiCss3,
+  SiPhp,
+  SiReact,
+  SiLaravel,
+  SiCodeigniter,
+  SiN8N,
+  SiHubspot,
+  SiWebflow,
+  SiWordpress,
+  SiTypeform,
+  SiGit,
+  SiGithub,
+  SiCloudflare,
+  SiGooglecloud,
+  SiKalilinux,
+  SiWireshark,
+  SiMetasploit,
+  SiAutodesk,
+  SiSketchup,
+} from "react-icons/si";
+import {
+  FaRobot,
+  FaShieldAlt,
+  FaNetworkWired,
+  FaProjectDiagram,
+  FaCalculator,
+  FaDatabase,
+  FaCogs
+} from "react-icons/fa";
+import { TbApi, TbBrandOauth } from "react-icons/tb";
+import { BsStack } from "react-icons/bs";
+import { IconType } from "react-icons";
 
-const skillCategories = [
+interface Skill {
+  name: string;
+  icon: IconType;
+}
+
+interface SkillCategory {
+  title: string;
+  skills: Skill[];
+}
+
+const skillCategories: SkillCategory[] = [
   {
     title: "DevOps & Cloud",
-    skills: ["Docker", "Kubernetes", "AWS", "Apache Kafka", "Redis", "Elasticsearch", "Ceph"],
+    skills: [
+      { name: "Docker", icon: SiDocker },
+      { name: "Kubernetes", icon: SiKubernetes },
+      { name: "AWS", icon: SiAmazonwebservices },
+      { name: "Apache Kafka", icon: SiApachekafka },
+      { name: "Redis", icon: SiRedis },
+      { name: "Elasticsearch", icon: SiElasticsearch },
+      { name: "Ceph", icon: SiCeph },
+    ],
   },
   {
     title: "Web Development",
-    skills: ["Python", "Odoo 16/17", "JavaScript", "HTML5/CSS3", "PHP", "React", "Laravel", "CodeIgniter"],
+    skills: [
+      { name: "Python", icon: SiPython },
+      { name: "Odoo 16/17", icon: FaCogs },
+      { name: "JavaScript", icon: SiJavascript },
+      { name: "HTML5/CSS3", icon: SiHtml5 },
+      { name: "PHP", icon: SiPhp },
+      { name: "React", icon: SiReact },
+      { name: "Laravel", icon: SiLaravel },
+      { name: "CodeIgniter", icon: SiCodeigniter },
+    ],
   },
   {
     title: "Automation & APIs",
-    skills: ["n8n", "REST APIs", "HubSpot API", "Webflow API", "WordPress API", "Typeform", "Reply.io API", "OrderTime API"],
+    skills: [
+      { name: "n8n", icon: SiN8N },
+      { name: "REST APIs", icon: TbApi },
+      { name: "HubSpot API", icon: SiHubspot },
+      { name: "Webflow API", icon: SiWebflow },
+      { name: "WordPress API", icon: SiWordpress },
+      { name: "Typeform", icon: SiTypeform },
+      { name: "Reply.io API", icon: TbBrandOauth },
+      { name: "OrderTime API", icon: FaDatabase },
+    ],
   },
   {
     title: "AI & Tools",
-    skills: ["Claude", "ChatGPT", "Git", "GitHub", "Cloudflare", "GCP"],
+    skills: [
+      { name: "Claude", icon: FaRobot },
+      { name: "ChatGPT", icon: FaRobot },
+      { name: "Git", icon: SiGit },
+      { name: "GitHub", icon: SiGithub },
+      { name: "Cloudflare", icon: SiCloudflare },
+      { name: "GCP", icon: SiGooglecloud },
+    ],
   },
   {
     title: "Cybersecurity",
-    skills: ["Kali Linux", "Nmap", "Wireshark", "Metasploit", "Network Security", "Penetration Testing"],
+    skills: [
+      { name: "Kali Linux", icon: SiKalilinux },
+      { name: "Nmap", icon: FaNetworkWired },
+      { name: "Wireshark", icon: SiWireshark },
+      { name: "Metasploit", icon: SiMetasploit },
+      { name: "Network Security", icon: FaShieldAlt },
+      { name: "Penetration Testing", icon: FaShieldAlt },
+    ],
   },
   {
     title: "Engineering Software",
-    skills: ["STAAD Pro", "ETABS 19", "AutoCAD 2D/3D", "SketchUp Pro", "Primavera P6", "MS Project"],
+    skills: [
+      { name: "STAAD Pro", icon: BsStack },
+      { name: "ETABS 19", icon: FaCalculator },
+      { name: "AutoCAD 2D/3D", icon: SiAutodesk },
+      { name: "SketchUp Pro", icon: SiSketchup },
+      { name: "Primavera P6", icon: FaProjectDiagram },
+      { name: "MS Project", icon: FaProjectDiagram },
+    ],
   },
 ];
 
@@ -50,11 +149,28 @@ export function SkillsSection() {
     },
   };
 
-  const badgeVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+  const skillVariants = {
+    hidden: { opacity: 0, scale: 0, rotate: -180 },
     visible: {
       opacity: 1,
       scale: 1,
+      rotate: 0,
+      transition: {
+        type: "spring" as const,
+        stiffness: 200,
+        damping: 15,
+      },
+    },
+  };
+
+  const iconFloatVariants = {
+    animate: {
+      y: [-2, 2, -2],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut" as const,
+      },
     },
   };
 
@@ -75,7 +191,7 @@ export function SkillsSection() {
         </motion.div>
 
         <motion.div
-          className="mx-auto max-w-5xl"
+          className="mx-auto max-w-6xl"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
@@ -85,12 +201,16 @@ export function SkillsSection() {
             {skillCategories.map((category, categoryIndex) => (
               <motion.div
                 key={category.title}
-                className="space-y-4"
+                className="rounded-xl border-2 bg-background/50 p-6 backdrop-blur-sm hover:border-primary/30 transition-colors duration-300"
                 variants={categoryVariants}
                 custom={categoryIndex}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.1)"
+                }}
               >
                 <motion.h3
-                  className="text-xl font-semibold text-center"
+                  className="text-xl font-semibold text-center mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
@@ -98,27 +218,44 @@ export function SkillsSection() {
                   {category.title}
                 </motion.h3>
                 <motion.div
-                  className="flex flex-wrap justify-center gap-2"
+                  className="grid grid-cols-4 gap-3"
                   variants={containerVariants}
                 >
                   {category.skills.map((skill, skillIndex) => (
                     <motion.div
-                      key={skill}
-                      variants={badgeVariants}
-                      transition={{ delay: skillIndex * 0.05 }}
-                      whileHover={{
-                        scale: 1.1,
-                        y: -5,
-                        transition: { duration: 0.2 }
-                      }}
-                      whileTap={{ scale: 0.95 }}
+                      key={skill.name}
+                      className="group flex flex-col items-center gap-2"
+                      variants={skillVariants}
+                      custom={skillIndex}
+                      whileHover={{ scale: 1.2, zIndex: 10 }}
+                      whileTap={{ scale: 0.9 }}
                     >
-                      <Badge
-                        variant="secondary"
-                        className="px-3 py-1 text-sm cursor-default transition-colors hover:bg-primary hover:text-primary-foreground"
+                      <motion.div
+                        className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300"
+                        variants={iconFloatVariants}
+                        animate="animate"
+                        whileHover={{
+                          rotate: [0, -10, 10, -10, 0],
+                          transition: { duration: 0.5 }
+                        }}
                       >
-                        {skill}
-                      </Badge>
+                        <skill.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
+                        <motion.div
+                          className="absolute inset-0 rounded-xl bg-primary/20"
+                          initial={{ scale: 0, opacity: 0 }}
+                          whileHover={{ scale: 1.5, opacity: 0 }}
+                          transition={{ duration: 0.4 }}
+                        />
+                      </motion.div>
+                      <motion.span
+                        className="text-[10px] text-center text-muted-foreground group-hover:text-primary transition-colors duration-300 leading-tight"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: skillIndex * 0.05 }}
+                      >
+                        {skill.name}
+                      </motion.span>
                     </motion.div>
                   ))}
                 </motion.div>
