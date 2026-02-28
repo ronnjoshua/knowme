@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { ClientWrapper } from "@/components/client-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ronn Joshua Nucup | Odoo Developer & Licensed Civil Engineer",
-  description: "Results-driven developer with dual expertise in Software Development and Civil Engineering. Specializing in Odoo implementation, API integrations, and workflow automation.",
+  title: "Ronn Joshua Nucup | DevOps Engineer & Software Developer",
+  description: "Results-driven developer with dual expertise in Software Development and Civil Engineering. Specializing in DevOps, Odoo implementation, API integrations, and workflow automation.",
 };
 
 export default function RootLayout({
@@ -36,11 +37,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <ClientWrapper>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ClientWrapper>
         </ThemeProvider>
       </body>
     </html>

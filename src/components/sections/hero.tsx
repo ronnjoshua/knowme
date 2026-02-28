@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { scrollToSection } from "@/lib/scroll";
+import gsap from "gsap";
+
+const FloatingShapes = dynamic(
+  () => import("@/components/3d/floating-shapes").then((mod) => mod.FloatingShapes),
+  { ssr: false }
+);
 
 const roles = [
   "DevOps Engineer",
@@ -19,6 +26,26 @@ export function HeroSection() {
   const [currentRole, setCurrentRole] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    // GSAP animation for title
+    if (titleRef.current) {
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 100, scale: 0.8 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power4.out" }
+      );
+    }
+    if (subtitleRef.current) {
+      gsap.fromTo(
+        subtitleRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power3.out" }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const role = roles[currentRole];
@@ -77,37 +104,14 @@ export function HeroSection() {
 
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-16 overflow-hidden">
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </div>
+      {/* 3D Background */}
+      <FloatingShapes />
+
+      {/* Gradient overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background/80 -z-5" />
 
       <motion.div
-        className="container mx-auto text-center"
+        className="container mx-auto text-center relative z-10"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -120,19 +124,20 @@ export function HeroSection() {
             Welcome to my portfolio
           </motion.p>
 
-          <motion.h1
+          <h1
+            ref={titleRef}
             className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-            variants={itemVariants}
           >
             Hi, I&apos;m{" "}
             <motion.span
-              className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent"
+              className="bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent bg-[length:200%_auto]"
+              animate={{ backgroundPosition: ["0%", "200%"] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
             >
               Ronn Joshua
             </motion.span>
-          </motion.h1>
+          </h1>
 
           <motion.div
             className="mb-8 h-12 flex items-center justify-center"
@@ -149,8 +154,8 @@ export function HeroSection() {
           </motion.div>
 
           <motion.p
+            ref={subtitleRef}
             className="mb-8 text-base text-muted-foreground sm:text-lg max-w-2xl mx-auto"
-            variants={itemVariants}
           >
             Results-driven developer with dual expertise in Software Development and Civil Engineering.
             Specializing in Odoo implementation, API integrations, and workflow automation.
@@ -160,7 +165,11 @@ export function HeroSection() {
             className="flex flex-col items-center justify-center gap-4 sm:flex-row"
             variants={itemVariants}
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div
+              whileHover={{ scale: 1.05, rotateY: 5 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ transformStyle: "preserve-3d" }}
+            >
               <Button
                 size="lg"
                 className="relative overflow-hidden group"
@@ -168,18 +177,23 @@ export function HeroSection() {
               >
                 <span className="relative z-10">Get in Touch</span>
                 <motion.div
-                  className="absolute inset-0 bg-primary-foreground/10"
+                  className="absolute inset-0 bg-gradient-to-r from-purple-600 to-primary"
                   initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.5 }}
+                  whileHover={{ x: "0%" }}
+                  transition={{ duration: 0.3 }}
                 />
               </Button>
             </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div
+              whileHover={{ scale: 1.05, rotateY: -5 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ transformStyle: "preserve-3d" }}
+            >
               <Button
                 variant="outline"
                 size="lg"
                 onClick={() => scrollToSection("projects")}
+                className="backdrop-blur-sm"
               >
                 View Projects
               </Button>
@@ -197,7 +211,7 @@ export function HeroSection() {
             ].map((social, index) => (
               <motion.div
                 key={social.href}
-                whileHover={{ scale: 1.2, y: -3 }}
+                whileHover={{ scale: 1.3, y: -5, rotateZ: 10 }}
                 whileTap={{ scale: 0.9 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -207,9 +221,9 @@ export function HeroSection() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-muted-foreground hover:bg-primary/20 hover:text-primary transition-all duration-300"
                 >
-                  <social.icon className="h-6 w-6" />
+                  <social.icon className="h-5 w-5" />
                 </Link>
               </motion.div>
             ))}
