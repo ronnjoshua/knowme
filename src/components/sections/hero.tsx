@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { scrollToSection } from "@/lib/scroll";
 
 const roles = [
+  "DevOps Engineer",
   "Odoo Developer",
   "Software Engineer",
   "API Integration Specialist",

@@ -6,6 +6,20 @@ import { motion } from "framer-motion";
 
 const experiences = [
   {
+    title: "IT Support and Platform Specialist",
+    company: "DITO Telecommunity Corporation",
+    location: "National Capital Region, Philippines",
+    period: "Dec 2025 - Present",
+    description: [
+      "Maintain and operate PaaS platform components including Kubernetes, Kafka, Elasticsearch, Ceph, and Redis",
+      "Perform installation, deployment, configuration, and optimization of open-source PaaS components",
+      "Execute patch installation and version upgrades for platform components",
+      "Monitor, troubleshoot, and provide technical support for PaaS infrastructure",
+      "Implement security rectification and reinforcement measures for platform security",
+      "Support platform expansion, renovation, and migration projects",
+    ],
+  },
+  {
     title: "Software Developer / Odoo Developer",
     company: "Better Business Group Inc.",
     location: "Makati City",
