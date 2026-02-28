@@ -21,7 +21,7 @@ const experiences = [
   },
   {
     title: "Software Developer / Odoo Developer",
-    company: "Better Business Group Inc.",
+    company: "Journey Better Business Group Inc.",
     location: "Makati City",
     period: "Aug 2023 - Dec 2025",
     description: [
