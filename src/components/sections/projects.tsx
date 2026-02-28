@@ -15,7 +15,7 @@ const projects = [
     tags: ["Next.js", "React", "Tailwind CSS", "Vercel"],
     liveUrl: "https://real-estate-nhyu.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/real-estate",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=450&fit=crop&q=80",
+    image: "/projects/real-estate.png",
   },
   {
     title: "RSVP Wedding Invitation",
@@ -23,7 +23,7 @@ const projects = [
     tags: ["React", "Web App", "RSVP System", "Vercel"],
     liveUrl: "https://rsvp-wedding-invitation-reservation.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/RSVP-Wedding-Invitation-Reservation-",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=450&fit=crop&q=80",
+    image: "/projects/rsvp.png",
   },
   {
     title: "This Portfolio",
@@ -31,7 +31,7 @@ const projects = [
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui"],
     liveUrl: "https://knowme-seven.vercel.app",
     githubUrl: "https://github.com/ronnjoshua/knowme",
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop&q=80",
+    image: "/projects/portfolio.png",
   },
 ];
 
