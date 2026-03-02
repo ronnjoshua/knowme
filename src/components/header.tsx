@@ -20,16 +20,6 @@ const navItems = [
   { id: "contact", label: "Contact" },
 ];
 
-// Define section color schemes (for dark sections, use light text)
-const sectionColors: Record<string, { bg: string; text: string; border: string }> = {
-  hero: { bg: "transparent", text: "inherit", border: "transparent" },
-  about: { bg: "rgba(var(--primary-rgb), 0.05)", text: "inherit", border: "rgba(var(--primary-rgb), 0.2)" },
-  skills: { bg: "transparent", text: "inherit", border: "transparent" },
-  projects: { bg: "rgba(var(--primary-rgb), 0.05)", text: "inherit", border: "rgba(var(--primary-rgb), 0.2)" },
-  experience: { bg: "transparent", text: "inherit", border: "transparent" },
-  contact: { bg: "rgba(var(--primary-rgb), 0.1)", text: "inherit", border: "rgba(var(--primary-rgb), 0.3)" },
-};
-
 export function Header() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
@@ -63,21 +53,6 @@ export function Header() {
     };
   }, []);
 
-  // Animate header based on active section
-  useEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
-
-    const colors = sectionColors[activeSection] || sectionColors.hero;
-
-    gsap.to(header, {
-      backgroundColor: colors.bg,
-      borderColor: colors.border,
-      duration: 0.4,
-      ease: "power2.out",
-    });
-  }, [activeSection]);
-
   // Animate active nav indicator
   useEffect(() => {
     const activeButton = document.querySelector(`[data-section="${activeSection}"]`) as HTMLElement;
@@ -96,72 +71,77 @@ export function Header() {
   return (
     <header
       ref={headerRef}
-      className="sticky top-0 z-50 w-full border-b backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-colors"
-      style={{ backgroundColor: "transparent", borderColor: "transparent" }}
+      className="sticky top-0 z-50 w-full py-3 px-4 transition-colors"
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center space-x-2 group">
-          <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground bg-clip-text transition-all duration-300 group-hover:from-primary group-hover:to-purple-500 group-hover:text-transparent">
-            Portfolio
-          </span>
-        </Link>
+      {/* Glass frame container */}
+      <div className="container mx-auto">
+        <div className="relative flex h-14 items-center justify-between px-6 rounded-2xl border border-white/20 dark:border-white/10 bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/30">
+          {/* Subtle gradient overlay for extra glass effect */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/20 via-transparent to-white/20 dark:from-white/5 dark:via-transparent dark:to-white/5 pointer-events-none" />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1 relative">
-          {/* Active indicator */}
-          <div
-            ref={indicatorRef}
-            className="absolute bottom-0 h-0.5 bg-gradient-to-r from-primary to-purple-500 rounded-full transition-opacity"
-            style={{ opacity: activeSection !== "hero" ? 1 : 0 }}
-          />
+          <Link href="/" className="relative flex items-center space-x-2 group">
+            <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground bg-clip-text transition-all duration-300 group-hover:from-primary group-hover:to-purple-500 group-hover:text-transparent">
+              Portfolio
+            </span>
+          </Link>
 
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              data-section={item.id}
-              onClick={() => handleNavClick(item.id)}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md hover:bg-primary/10 ${
-                activeSection === item.id
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          <div className="ml-2">
+          {/* Desktop Navigation */}
+          <nav className="relative hidden md:flex items-center space-x-1">
+            {/* Active indicator */}
+            <div
+              ref={indicatorRef}
+              className="absolute bottom-0 h-0.5 bg-gradient-to-r from-primary to-purple-500 rounded-full transition-opacity"
+              style={{ opacity: activeSection !== "hero" ? 1 : 0 }}
+            />
+
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                data-section={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 ${
+                  activeSection === item.id
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+            <div className="ml-2">
+              <ThemeToggle />
+            </div>
+          </nav>
+
+          {/* Mobile Navigation */}
+          <div className="relative flex items-center md:hidden">
             <ThemeToggle />
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-2">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] backdrop-blur-xl bg-background/95">
+                <nav className="flex flex-col space-y-2 mt-8">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.id)}
+                      className={`text-lg font-medium transition-all duration-300 text-left px-4 py-3 rounded-lg ${
+                        activeSection === item.id
+                          ? "text-primary bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
-        </nav>
-
-        {/* Mobile Navigation */}
-        <div className="flex items-center md:hidden">
-          <ThemeToggle />
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="ml-2">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <nav className="flex flex-col space-y-2 mt-8">
-                {navItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.id)}
-                    className={`text-lg font-medium transition-all duration-300 text-left px-4 py-3 rounded-lg ${
-                      activeSection === item.id
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
     </header>
