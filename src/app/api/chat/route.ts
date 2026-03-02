@@ -77,9 +77,12 @@ Once they provide this format, I will automatically send the email to Ronn. Tell
 
 // Function to extract email details from message
 function extractEmailDetails(message: string): { name: string; email: string; message: string } | null {
-  const nameMatch = message.match(/Name:\s*(.+?)(?:\n|Email:)/i);
-  const emailMatch = message.match(/Email:\s*([^\s]+@[^\s]+?)(?:\n|Message:)/i);
-  const messageMatch = message.match(/Message:\s*([\s\S]+?)(?:---|$)/i);
+  // More flexible regex patterns
+  const nameMatch = message.match(/Name[:\s]+([^\n]+)/i);
+  const emailMatch = message.match(/Email[:\s]+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
+  const messageMatch = message.match(/Message[:\s]+([\s\S]+?)(?:---|$)/i);
+
+  console.log("Parsing email - Name:", nameMatch?.[1], "Email:", emailMatch?.[1], "Message:", messageMatch?.[1]?.substring(0, 50));
 
   if (nameMatch && emailMatch && messageMatch) {
     return {
@@ -99,7 +102,9 @@ async function sendEmailToRonn(details: { name: string; email: string; message: 
   }
 
   try {
-    await resend.emails.send({
+    console.log("Attempting to send email to Ronn from:", details.name, details.email);
+
+    const result = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
       to: "Nucup53@gmail.com",
       subject: `Portfolio Contact from ${details.name}`,
@@ -112,6 +117,8 @@ async function sendEmailToRonn(details: { name: string; email: string; message: 
       `,
       replyTo: details.email,
     });
+
+    console.log("Email sent successfully:", result);
     return true;
   } catch (error) {
     console.error("Email send error:", error);
