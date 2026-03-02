@@ -226,10 +226,10 @@ export function HeroSection() {
                 asChild
                 className="backdrop-blur-sm"
               >
-                <Link href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+                <a href="/resume.pdf" download target="_blank" rel="noopener noreferrer">
                   <FileDown className="mr-2 h-4 w-4" />
                   Resume
-                </Link>
+                </a>
               </Button>
             </motion.div>
           </motion.div>
