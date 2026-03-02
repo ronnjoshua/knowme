@@ -2,13 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Sparkles, User, Loader2, Minimize2 } from "lucide-react";
+import { MessageSquare, X, Send, Bot, User, Loader2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  timestamp: Date;
 }
 
 export function ChatWidget() {
@@ -18,15 +19,29 @@ export function ChatWidget() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hello! I'm Ronn's AI assistant. How can I help you today? Feel free to ask about his skills, experience, or projects.",
+      content: "Hello! I'm Ronn's AI assistant. How can I help you today?",
+      timestamp: new Date(),
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = useCallback((smooth = true) => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: smooth ? "smooth" : "auto"
+    });
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+    setShowScrollButton(!isNearBottom);
   }, []);
 
   useEffect(() => {
@@ -50,6 +65,7 @@ export function ChatWidget() {
       id: Date.now().toString(),
       role: "user",
       content: userMessage,
+      timestamp: new Date(),
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setIsLoading(true);
@@ -78,7 +94,7 @@ export function ChatWidget() {
       const assistantMessageId = (Date.now() + 1).toString();
       setMessages((prev) => [
         ...prev,
-        { id: assistantMessageId, role: "assistant", content: "" },
+        { id: assistantMessageId, role: "assistant", content: "", timestamp: new Date() },
       ]);
 
       let fullContent = "";
@@ -103,12 +119,17 @@ export function ChatWidget() {
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "I apologize, but I'm having trouble connecting right now. Please try again or use the contact form below.",
+          content: "I apologize, but I'm having trouble connecting right now. Please try again or use the contact form.",
+          timestamp: new Date(),
         },
       ]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -121,10 +142,10 @@ export function ChatWidget() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 pl-4 pr-5 py-3 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all hover:scale-105 active:scale-95"
             aria-label="Open chat"
           >
-            <Sparkles className="h-5 w-5" />
+            <Bot className="h-5 w-5" />
             <span className="font-medium text-sm hidden sm:inline">Chat with Ronn&apos;s AI</span>
             <MessageSquare className="h-5 w-5 sm:hidden" />
           </motion.button>
@@ -135,96 +156,104 @@ export function ChatWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-2xl"
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] flex flex-col overflow-hidden rounded-3xl border border-border/50 bg-background shadow-2xl shadow-black/10 dark:shadow-black/30"
+            style={{ height: "min(600px, calc(100vh - 6rem))" }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-primary/5 to-purple-500/5 px-4 py-3">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 bg-muted/30">
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary to-purple-600">
-                    <Sparkles className="h-5 w-5 text-white" />
-                  </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-gray-950" />
+                <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+                  <Bot className="h-6 w-6" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-background" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground text-sm">Ronn&apos;s AI Assistant</h3>
-                  <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    Online
-                  </p>
+                  <h3 className="font-semibold text-foreground">Ronn&apos;s AI</h3>
+                  <p className="text-xs text-muted-foreground">Always here to help</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2.5 rounded-xl hover:bg-muted transition-colors"
                 aria-label="Close chat"
               >
-                <Minimize2 className="h-4 w-4 text-muted-foreground" />
+                <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </div>
 
-            {/* Messages */}
-            <div className="h-[380px] overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-gray-900/50">
-              {messages.map((message) => (
+            {/* Messages Container - Scrollable */}
+            <div
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'hsl(var(--muted-foreground) / 0.3) transparent',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {messages.map((message, index) => (
                 <motion.div
                   key={message.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                  transition={{ duration: 0.25, delay: index === messages.length - 1 ? 0 : 0 }}
+                  className={`flex flex-col gap-1 ${message.role === "user" ? "items-end" : "items-start"}`}
                 >
-                  <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      message.role === "user"
-                        ? "bg-primary"
-                        : "bg-gradient-to-br from-primary/20 to-purple-500/20 border border-primary/20"
-                    }`}
-                  >
-                    {message.role === "user" ? (
-                      <User className="h-4 w-4 text-primary-foreground" />
-                    ) : (
-                      <Sparkles className="h-4 w-4 text-primary" />
+                  <div className={`flex items-end gap-2 max-w-[85%] ${message.role === "user" ? "flex-row-reverse" : ""}`}>
+                    {message.role === "assistant" && (
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 mb-1">
+                        <Bot className="h-4 w-4 text-primary" />
+                      </div>
+                    )}
+                    <div
+                      className={`px-4 py-2.5 ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground rounded-2xl rounded-br-md"
+                          : "bg-muted rounded-2xl rounded-bl-md"
+                      }`}
+                    >
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content || (
+                          <span className="flex items-center gap-2 text-muted-foreground">
+                            <span className="flex gap-1">
+                              <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:-0.3s]"></span>
+                              <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:-0.15s]"></span>
+                              <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce"></span>
+                            </span>
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    {message.role === "user" && (
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary mb-1">
+                        <User className="h-4 w-4 text-primary-foreground" />
+                      </div>
                     )}
                   </div>
-                  <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-tr-md"
-                        : "bg-white dark:bg-gray-800 text-foreground rounded-tl-md shadow-sm border border-gray-100 dark:border-gray-700"
-                    }`}
-                  >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {message.content || (
-                        <span className="flex items-center gap-2">
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                          <span className="text-muted-foreground">Typing...</span>
-                        </span>
-                      )}
-                    </p>
-                  </div>
+                  <span className={`text-[10px] text-muted-foreground/60 px-2 ${message.role === "user" ? "text-right" : "text-left ml-9"}`}>
+                    {formatTime(message.timestamp)}
+                  </span>
                 </motion.div>
               ))}
+
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3"
+                  className="flex items-end gap-2"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 border border-primary/20">
-                    <Sparkles className="h-4 w-4 text-primary" />
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Bot className="h-4 w-4 text-primary" />
                   </div>
-                  <div className="flex items-center gap-2 rounded-2xl rounded-tl-md bg-white dark:bg-gray-800 px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700">
-                    <div className="flex gap-1">
-                      <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce [animation-delay:-0.3s]"></span>
-                      <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce [animation-delay:-0.15s]"></span>
-                      <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce"></span>
+                  <div className="px-4 py-3 bg-muted rounded-2xl rounded-bl-md">
+                    <div className="flex gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.3s]"></span>
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.15s]"></span>
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce"></span>
                     </div>
                   </div>
                 </motion.div>
@@ -232,43 +261,67 @@ export function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center gap-2 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 p-3"
-            >
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
-                disabled={isLoading}
-              />
-              <Button
-                type="submit"
-                size="icon"
-                disabled={!input.trim() || isLoading}
-                className="h-10 w-10 rounded-xl bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </form>
+            {/* Scroll to bottom button */}
+            <AnimatePresence>
+              {showScrollButton && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={() => scrollToBottom()}
+                  className="absolute bottom-24 left-1/2 -translate-x-1/2 p-2 rounded-full bg-background border border-border shadow-lg hover:bg-muted transition-colors"
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </motion.button>
+              )}
+            </AnimatePresence>
 
-            {/* Footer */}
-            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
-              <p className="text-[10px] text-center text-muted-foreground">
-                Powered by AI • Responses may vary
-              </p>
+            {/* Input */}
+            <div className="p-4 border-t border-border/50 bg-background">
+              <form onSubmit={handleSubmit} className="flex items-center gap-2">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className="flex-1 rounded-xl border border-border bg-muted/50 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+                  disabled={isLoading}
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={!input.trim() || isLoading}
+                  className="h-11 w-11 rounded-xl shrink-0"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Send className="h-5 w-5" />
+                  )}
+                </Button>
+              </form>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Custom scrollbar styles */}
+      <style jsx global>{`
+        .chat-messages::-webkit-scrollbar {
+          width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+          background-color: hsl(var(--muted-foreground) / 0.3);
+          border-radius: 3px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+          background-color: hsl(var(--muted-foreground) / 0.5);
+        }
+      `}</style>
     </>
   );
 }
