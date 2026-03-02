@@ -104,9 +104,9 @@ async function sendEmailToRonn(details: { name: string; email: string; message: 
   try {
     console.log("Attempting to send email to Ronn from:", details.name, details.email);
 
-    const result = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
-      to: "Nucup53@gmail.com",
+      to: "nucup53@gmail.com", // lowercase to match Resend verified email
       subject: `Portfolio Contact from ${details.name}`,
       html: `
         <h2>New Contact from Portfolio Chatbot</h2>
@@ -118,7 +118,12 @@ async function sendEmailToRonn(details: { name: string; email: string; message: 
       replyTo: details.email,
     });
 
-    console.log("Email sent successfully:", result);
+    if (error) {
+      console.error("Resend API error:", error);
+      return false;
+    }
+
+    console.log("Email sent successfully:", data);
     return true;
   } catch (error) {
     console.error("Email send error:", error);
@@ -142,12 +147,12 @@ export async function POST(req: Request) {
         const emailSent = await sendEmailToRonn(emailDetails);
         if (emailSent) {
           return new Response(
-            `Great news! I've successfully sent your message to Ronn. He'll receive an email from ${emailDetails.name} (${emailDetails.email}) and will get back to you as soon as possible. Is there anything else you'd like to know about Ronn?`,
+            `✅ Message sent successfully!\n\nI've forwarded your message to Ronn. Here's what was sent:\n\n• From: ${emailDetails.name}\n• Email: ${emailDetails.email}\n• Message: "${emailDetails.message.substring(0, 100)}${emailDetails.message.length > 100 ? '...' : ''}"\n\nRonn will get back to you at ${emailDetails.email} as soon as possible. Is there anything else you'd like to know about him?`,
             { headers: { "Content-Type": "text/plain" } }
           );
         } else {
           return new Response(
-            `I apologize, but I couldn't send the email right now. Please try using the contact form on the website or email Ronn directly at Nucup53@gmail.com. Is there anything else I can help you with?`,
+            `❌ Sorry, I couldn't send the email right now.\n\nPlease try one of these alternatives:\n• Use the contact form on the website\n• Email Ronn directly at Nucup53@gmail.com\n\nIs there anything else I can help you with?`,
             { headers: { "Content-Type": "text/plain" } }
           );
         }
