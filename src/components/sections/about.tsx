@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Code2, Cpu, Workflow } from "lucide-react";
 import { motion } from "framer-motion";
 import { TiltCard } from "@/components/3d/tilt-card";
+import { SplitText } from "@/components/split-text";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -35,30 +36,11 @@ const highlights = [
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!titleRef.current || !textRef.current || !cardsRef.current) return;
-
-    // Animate title with split text effect
-    gsap.fromTo(
-      titleRef.current,
-      { opacity: 0, y: 50, rotateX: -90 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
+    if (!textRef.current || !cardsRef.current) return;
 
     // Animate paragraphs
     const paragraphs = textRef.current.querySelectorAll("p");
@@ -119,11 +101,16 @@ export function AboutSection() {
     <section id="about" ref={sectionRef} className="py-16 sm:py-24 perspective-1000">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <h2
-            ref={titleRef}
-            className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl bg-gradient-to-r from-primary via-purple-500 to-cyan-500 bg-clip-text text-transparent"
-          >
-            About Me
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl bg-gradient-to-r from-primary via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+            <SplitText
+              animation="random"
+              duration={0.6}
+              stagger={0.03}
+              trigger="scroll"
+              start="top 85%"
+            >
+              About Me
+            </SplitText>
           </h2>
           <div ref={textRef}>
             <p className="mb-6 text-lg text-muted-foreground">

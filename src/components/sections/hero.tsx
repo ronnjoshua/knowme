@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { scrollToSection } from "@/lib/scroll";
 import gsap from "gsap";
+import { SplitText, SplitWords } from "@/components/split-text";
 
 const FloatingShapes = dynamic(
   () => import("@/components/3d/floating-shapes").then((mod) => mod.FloatingShapes),
@@ -26,23 +27,18 @@ export function HeroSection() {
   const [currentRole, setCurrentRole] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    // GSAP animation for title
-    if (titleRef.current) {
-      gsap.fromTo(
-        titleRef.current,
-        { opacity: 0, y: 100, scale: 0.8 },
-        { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power4.out" }
-      );
-    }
+    // Trigger load state after mount for animations
+    setIsLoaded(true);
+
     if (subtitleRef.current) {
       gsap.fromTo(
         subtitleRef.current,
         { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 1, delay: 1.2, ease: "power3.out" }
       );
     }
   }, []);
@@ -103,7 +99,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-16 overflow-hidden">
+    <section id="hero" className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-16 overflow-hidden">
       {/* 3D Background */}
       <FloatingShapes />
 
@@ -124,19 +120,40 @@ export function HeroSection() {
             Welcome to my portfolio
           </motion.p>
 
-          <h1
-            ref={titleRef}
-            className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          >
-            Hi, I&apos;m{" "}
-            <motion.span
-              className="bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent bg-[length:200%_auto]"
-              animate={{ backgroundPosition: ["0%", "200%"] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              whileHover={{ scale: 1.05 }}
-            >
-              Ronn Joshua
-            </motion.span>
+          <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            {isLoaded && (
+              <>
+                <SplitText
+                  trigger="load"
+                  animation="wave"
+                  duration={0.6}
+                  stagger={0.04}
+                  delay={0.2}
+                >
+                  Hi, I&apos;m
+                </SplitText>{" "}
+                <motion.span
+                  className="inline-block bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent bg-[length:200%_auto]"
+                  initial={{ opacity: 0, scale: 0.5, rotateX: -90 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    rotateX: 0,
+                    backgroundPosition: ["0%", "200%"]
+                  }}
+                  transition={{
+                    opacity: { duration: 0.8, delay: 0.6 },
+                    scale: { duration: 0.8, delay: 0.6, ease: "backOut" },
+                    rotateX: { duration: 0.8, delay: 0.6, ease: "backOut" },
+                    backgroundPosition: { duration: 3, repeat: Infinity, ease: "linear", delay: 1.4 }
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  Ronn Joshua
+                </motion.span>
+              </>
+            )}
           </h1>
 
           <motion.div

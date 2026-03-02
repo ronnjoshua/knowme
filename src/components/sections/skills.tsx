@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { SplitText } from "@/components/split-text";
 import {
   SiDocker,
   SiKubernetes,
@@ -184,7 +185,11 @@ export function SkillsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Skills & Technologies</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <SplitText animation="fadeUp" duration={0.5} stagger={0.03} trigger="scroll" start="top 85%">
+              Skills & Technologies
+            </SplitText>
+          </h2>
           <p className="mb-12 text-lg text-muted-foreground">
             A diverse skill set spanning software development, automation, and engineering.
           </p>

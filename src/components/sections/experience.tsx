@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
+import { SplitText } from "@/components/split-text";
 
 const experiences = [
   {
@@ -113,7 +114,11 @@ export function ExperienceSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Work Experience</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <SplitText animation="wave" duration={0.6} stagger={0.04} trigger="scroll" start="top 85%">
+              Work Experience
+            </SplitText>
+          </h2>
           <p className="mb-12 text-lg text-muted-foreground">
             My professional journey from Civil Engineering to Software Development.
           </p>

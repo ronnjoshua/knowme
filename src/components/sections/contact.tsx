@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence } from "framer-motion";
+import { SplitText } from "@/components/split-text";
 
 const contactInfo = [
   {
@@ -116,7 +117,11 @@ export function ContactSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Get in Touch</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <SplitText animation="random" duration={0.5} stagger={0.03} trigger="scroll" start="top 85%">
+              Get in Touch
+            </SplitText>
+          </h2>
           <p className="mb-12 text-lg text-muted-foreground">
             Have a project in mind or want to collaborate? Feel free to reach out!
           </p>

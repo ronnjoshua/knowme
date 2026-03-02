@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { TiltCard } from "@/components/3d/tilt-card";
+import { SplitText } from "@/components/split-text";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -112,7 +113,9 @@ export function ProjectsSection() {
             animate={{ backgroundPosition: ["0%", "200%"] }}
             transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
           >
-            Featured Projects
+            <SplitText animation="fadeUp" duration={0.5} stagger={0.03} trigger="scroll" start="top 85%">
+              Featured Projects
+            </SplitText>
           </motion.h2>
           <p className="mb-12 text-lg text-muted-foreground">
             A selection of projects showcasing my expertise in development, automation, and optimization.
