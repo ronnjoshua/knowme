@@ -19,6 +19,14 @@ if (typeof window !== "undefined") {
 
 const projects = [
   {
+    title: "PetShop Asset Management",
+    description: "A full-stack asset management system for pet shops with pet tracking, product inventory, equipment monitoring, and dashboard analytics.",
+    tags: ["Next.js", "Express.js", "PostgreSQL", "Prisma", "TypeScript"],
+    liveUrl: "https://asset-management-black.vercel.app",
+    githubUrl: "https://github.com/ronnjoshua/asset-management",
+    image: "/projects/asset-management.png",
+  },
+  {
     title: "Real Estate Platform",
     description: "A modern real estate website featuring property listings, search functionality, and a clean user interface for browsing available properties.",
     tags: ["Next.js", "React", "Tailwind CSS", "Vercel"],
