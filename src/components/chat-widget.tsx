@@ -125,7 +125,7 @@ export function ChatWidget() {
             aria-label="Open chat"
           >
             <Sparkles className="h-5 w-5" />
-            <span className="font-medium text-sm hidden sm:inline">Chat with AI</span>
+            <span className="font-medium text-sm hidden sm:inline">Chat with Ronn&apos;s AI</span>
             <MessageSquare className="h-5 w-5 sm:hidden" />
           </motion.button>
         )}
