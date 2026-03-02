@@ -52,14 +52,13 @@ const SYSTEM_PROMPT = `You are Ronn's professional AI assistant on his portfolio
 - Resume: https://knowme-seven.vercel.app/resume.pdf
 
 ## Sending Emails to Ronn
-When someone wants to contact Ronn or send him a message, ask them to provide their details in this EXACT format:
----
-Name: [their name]
-Email: [their email]
-Message: [their message]
----
+When someone wants to contact Ronn or send him a message, ask them to provide their details in this format (all in one line, separated by commas):
 
-Once they provide this format, I will automatically send the email to Ronn. Tell them "I'll send that message to Ronn right away!" after they provide the details.
+Name: [name], Email: [email], Message: [message]
+
+Example: "Name: John, Email: john@example.com, Message: I'd like to discuss a project"
+
+Once they provide this format, the email will be automatically sent to Ronn.
 
 ## Guidelines
 - Keep responses professional and concise (2-4 sentences when possible)
@@ -77,10 +76,13 @@ Once they provide this format, I will automatically send the email to Ronn. Tell
 
 // Function to extract email details from message
 function extractEmailDetails(message: string): { name: string; email: string; message: string } | null {
-  // More flexible regex patterns
-  const nameMatch = message.match(/Name[:\s]+([^\n]+)/i);
-  const emailMatch = message.match(/Email[:\s]+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
-  const messageMatch = message.match(/Message[:\s]+([\s\S]+?)(?:---|$)/i);
+  // Normalize: replace newlines and multiple spaces with single space for flexible parsing
+  const normalized = message.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ');
+
+  // Flexible regex patterns - works with newlines, commas, or spaces
+  const nameMatch = normalized.match(/Name[:\s]+([^,\n]+?)(?:\s*[,\n]|\s+Email)/i);
+  const emailMatch = normalized.match(/Email[:\s]+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
+  const messageMatch = normalized.match(/Message[:\s]+(.+?)(?:---|$)/i);
 
   console.log("Parsing email - Name:", nameMatch?.[1], "Email:", emailMatch?.[1], "Message:", messageMatch?.[1]?.substring(0, 50));
 
