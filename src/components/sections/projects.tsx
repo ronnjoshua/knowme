@@ -8,7 +8,6 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { TiltCard } from "@/components/3d/tilt-card";
 import { SplitText } from "@/components/split-text";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -52,15 +51,96 @@ const projects = [
   },
 ];
 
+function ProjectCard({ project }: { project: typeof projects[0] }) {
+  return (
+    <Card className="group overflow-hidden transition-all hover:shadow-2xl flex flex-col h-full border-2 hover:border-primary/50 bg-background/80 backdrop-blur-sm w-[350px] sm:w-[400px] flex-shrink-0">
+      <CardHeader className="p-0">
+        <motion.div
+          className="aspect-video relative overflow-hidden"
+          whileHover={{ scale: 1.02 }}
+        >
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            sizes="400px"
+          />
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          />
+          <motion.div
+            className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
+            initial={{ y: 20 }}
+            whileHover={{ y: 0 }}
+          >
+            <div className="flex gap-2">
+              {project.liveUrl && (
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <Button asChild size="sm" variant="secondary" className="backdrop-blur-sm">
+                    <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-1 h-3 w-3" />
+                      Preview
+                    </Link>
+                  </Button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      </CardHeader>
+      <CardContent className="p-6 flex-1">
+        <motion.h3
+          className="mb-2 text-xl font-semibold"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
+          {project.title}
+        </motion.h3>
+        <p className="mb-4 text-sm text-muted-foreground line-clamp-3">{project.description}</p>
+        <div className="flex flex-wrap gap-2">
+          {project.tags.slice(0, 4).map((tag) => (
+            <Badge key={tag} variant="outline" className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      </CardContent>
+      <CardFooter className="p-6 pt-0">
+        <div className="flex gap-2">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button asChild size="sm" variant="outline">
+              <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                <Github className="mr-2 h-4 w-4" />
+                Code
+              </Link>
+            </Button>
+          </motion.div>
+          {project.liveUrl && (
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button asChild size="sm">
+                <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Live Demo
+                </Link>
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
+
 export function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!titleRef.current || !cardsRef.current) return;
+    if (!titleRef.current) return;
 
-    // Animate title
     gsap.fromTo(
       titleRef.current,
       { opacity: 0, y: 50 },
@@ -77,43 +157,16 @@ export function ProjectsSection() {
       }
     );
 
-    // Animate cards with stagger
-    const cards = cardsRef.current.querySelectorAll(".project-card");
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 100, rotateX: -15 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
-
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  // Duplicate projects for seamless infinite scroll
+  const duplicatedProjects = [...projects, ...projects];
 
   return (
-    <section id="projects" ref={sectionRef} className="py-16 sm:py-24 perspective-1000">
+    <section id="projects" ref={sectionRef} className="py-16 sm:py-24 overflow-hidden">
       <div className="container mx-auto px-4">
         <div ref={titleRef} className="mx-auto max-w-3xl text-center">
           <motion.h2
@@ -129,107 +182,46 @@ export function ProjectsSection() {
             A selection of projects showcasing my expertise in development, automation, and optimization.
           </p>
         </div>
-
-        <motion.div
-          ref={cardsRef}
-          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={containerVariants}
-        >
-          {projects.map((project, index) => (
-            <TiltCard key={project.title} className="project-card">
-              <Card className="group overflow-hidden transition-all hover:shadow-2xl flex flex-col h-full border-2 hover:border-primary/50 bg-background/80 backdrop-blur-sm">
-                <CardHeader className="p-0">
-                  <motion.div
-                    className="aspect-video relative overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    />
-                    <motion.div
-                      className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                      initial={{ y: 20 }}
-                      whileHover={{ y: 0 }}
-                    >
-                      <div className="flex gap-2">
-                        {project.liveUrl && (
-                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-                            <Button asChild size="sm" variant="secondary" className="backdrop-blur-sm">
-                              <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="mr-1 h-3 w-3" />
-                                Preview
-                              </Link>
-                            </Button>
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                </CardHeader>
-                <CardContent className="p-6 flex-1">
-                  <motion.h3
-                    className="mb-2 text-xl font-semibold"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                  >
-                    {project.title}
-                  </motion.h3>
-                  <p className="mb-4 text-sm text-muted-foreground">{project.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, tagIndex) => (
-                      <motion.div
-                        key={tag}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: tagIndex * 0.05 }}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                      >
-                        <Badge variant="outline" className="text-xs hover:bg-primary hover:text-primary-foreground transition-colors">
-                          {tag}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="p-6 pt-0">
-                  <div className="flex gap-2">
-                    <motion.div whileHover={{ scale: 1.05, rotateZ: 2 }} whileTap={{ scale: 0.95 }}>
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                          <Github className="mr-2 h-4 w-4" />
-                          Code
-                        </Link>
-                      </Button>
-                    </motion.div>
-                    {project.liveUrl && (
-                      <motion.div whileHover={{ scale: 1.05, rotateZ: -2 }} whileTap={{ scale: 0.95 }}>
-                        <Button asChild size="sm">
-                          <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            Live Demo
-                          </Link>
-                        </Button>
-                      </motion.div>
-                    )}
-                  </div>
-                </CardFooter>
-              </Card>
-            </TiltCard>
-          ))}
-        </motion.div>
       </div>
+
+      {/* Infinite Scroll Carousel */}
+      <div className="relative">
+        {/* Gradient overlays for fade effect */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+
+        {/* Scrolling container */}
+        <div
+          ref={scrollerRef}
+          className="flex gap-6 py-4 animate-scroll hover:pause-animation"
+          style={{
+            width: "max-content",
+          }}
+        >
+          {duplicatedProjects.map((project, index) => (
+            <ProjectCard key={`${project.title}-${index}`} project={project} />
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-scroll {
+          animation: scroll 30s linear infinite;
+        }
+
+        .animate-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 }
