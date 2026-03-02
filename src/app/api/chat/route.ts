@@ -76,23 +76,56 @@ Once they provide this format, the email will be automatically sent to Ronn.
 
 // Function to extract email details from message
 function extractEmailDetails(message: string): { name: string; email: string; message: string } | null {
-  // Normalize: replace newlines and multiple spaces with single space for flexible parsing
-  const normalized = message.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ');
+  // Normalize: replace newlines and multiple spaces with single space
+  const normalized = message.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
 
-  // Flexible regex patterns - works with newlines, commas, or spaces
-  const nameMatch = normalized.match(/Name[:\s]+([^,\n]+?)(?:\s*[,\n]|\s+Email)/i);
-  const emailMatch = normalized.match(/Email[:\s]+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
+  // Try labeled format first: Name: X, Email: Y, Message: Z
+  const nameMatch = normalized.match(/Name[:\s]+([^,]+?)(?:\s*,|\s+Email)/i);
+  const emailMatchLabeled = normalized.match(/Email[:\s]+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
   const messageMatch = normalized.match(/Message[:\s]+(.+?)(?:---|$)/i);
 
-  console.log("Parsing email - Name:", nameMatch?.[1], "Email:", emailMatch?.[1], "Message:", messageMatch?.[1]?.substring(0, 50));
-
-  if (nameMatch && emailMatch && messageMatch) {
+  if (nameMatch && emailMatchLabeled && messageMatch) {
+    console.log("Labeled format detected");
     return {
       name: nameMatch[1].trim(),
-      email: emailMatch[1].trim(),
+      email: emailMatchLabeled[1].trim(),
       message: messageMatch[1].trim(),
     };
   }
+
+  // Try simple format: name, email, message (comma separated, email in middle)
+  const emailInText = normalized.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
+  if (emailInText) {
+    const parts = normalized.split(/,\s*/);
+    if (parts.length >= 3) {
+      // Find which part has the email
+      const emailIndex = parts.findIndex(p => p.includes('@'));
+      if (emailIndex > 0 && emailIndex < parts.length - 1) {
+        // Format: name, email, message
+        const name = parts.slice(0, emailIndex).join(' ').trim();
+        const email = emailInText[1];
+        const msg = parts.slice(emailIndex + 1).join(', ').trim();
+
+        if (name && email && msg) {
+          console.log("Simple comma format detected:", name, email, msg);
+          return { name, email, message: msg };
+        }
+      } else if (emailIndex === 0 || emailIndex === parts.length - 1) {
+        // Email at start or end - try to figure out name and message
+        const nonEmailParts = parts.filter(p => !p.includes('@'));
+        if (nonEmailParts.length >= 2) {
+          console.log("Flexible format detected");
+          return {
+            name: nonEmailParts[0].trim(),
+            email: emailInText[1],
+            message: nonEmailParts.slice(1).join(', ').trim(),
+          };
+        }
+      }
+    }
+  }
+
+  console.log("No email format detected in:", normalized.substring(0, 100));
   return null;
 }
 
