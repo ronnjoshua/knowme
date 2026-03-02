@@ -128,46 +128,11 @@ export function ChatWidget() {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
+        fullContent += chunk;
 
-        // Filter out tool-related data prefixes from the stream
-        // The AI SDK sends data in format like "0:text" or other prefixed formats
-        const cleanedChunk = chunk
-          .split('\n')
-          .map(line => {
-            // Remove data stream prefixes (e.g., "0:", "e:", "d:")
-            if (/^\d+:/.test(line)) {
-              const content = line.substring(line.indexOf(':') + 1);
-              try {
-                // Try to parse as JSON (AI SDK format)
-                const parsed = JSON.parse(content);
-                if (typeof parsed === 'string') return parsed;
-                return '';
-              } catch {
-                return content;
-              }
-            }
-            return line;
-          })
-          .join('');
-
-        if (cleanedChunk) {
-          fullContent += cleanedChunk;
-
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantMessageId ? { ...m, content: fullContent } : m
-            )
-          );
-        }
-      }
-
-      // If no content was received, show a fallback message
-      if (!fullContent.trim()) {
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantMessageId
-              ? { ...m, content: "I processed your request. Is there anything else I can help you with?" }
-              : m
+            m.id === assistantMessageId ? { ...m, content: fullContent } : m
           )
         );
       }
