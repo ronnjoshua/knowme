@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
@@ -213,6 +213,23 @@ export function HeroSection() {
                 className="backdrop-blur-sm"
               >
                 View Projects
+              </Button>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05, rotateY: -5 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              <Button
+                variant="outline"
+                size="lg"
+                asChild
+                className="backdrop-blur-sm"
+              >
+                <Link href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+                  <FileDown className="mr-2 h-4 w-4" />
+                  Resume
+                </Link>
               </Button>
             </motion.div>
           </motion.div>

@@ -12,6 +12,17 @@ interface Message {
   timestamp: Date;
 }
 
+const LOADING_TEXTS = [
+  "Thinking...",
+  "Let me check that...",
+  "Processing your request...",
+  "Analyzing...",
+  "Looking into it...",
+  "One moment...",
+  "Working on it...",
+  "Gathering information...",
+];
+
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -19,15 +30,27 @@ export function ChatWidget() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hello! I'm Ronn's AI assistant. How can I help you today?",
+      content: "Hello! I'm Ronn's AI assistant. How can I help you today? You can ask me about Ronn's skills, projects, experience, or request his resume!",
       timestamp: new Date(),
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState(LOADING_TEXTS[0]);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Rotate loading text
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const interval = setInterval(() => {
+      setLoadingText(LOADING_TEXTS[Math.floor(Math.random() * LOADING_TEXTS.length)]);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const scrollToBottom = useCallback((smooth = true) => {
     messagesEndRef.current?.scrollIntoView({
@@ -60,6 +83,7 @@ export function ChatWidget() {
 
     const userMessage = input.trim();
     setInput("");
+    setLoadingText(LOADING_TEXTS[Math.floor(Math.random() * LOADING_TEXTS.length)]);
 
     const newUserMessage: Message = {
       id: Date.now().toString(),
@@ -104,11 +128,46 @@ export function ChatWidget() {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        fullContent += chunk;
 
+        // Filter out tool-related data prefixes from the stream
+        // The AI SDK sends data in format like "0:text" or other prefixed formats
+        const cleanedChunk = chunk
+          .split('\n')
+          .map(line => {
+            // Remove data stream prefixes (e.g., "0:", "e:", "d:")
+            if (/^\d+:/.test(line)) {
+              const content = line.substring(line.indexOf(':') + 1);
+              try {
+                // Try to parse as JSON (AI SDK format)
+                const parsed = JSON.parse(content);
+                if (typeof parsed === 'string') return parsed;
+                return '';
+              } catch {
+                return content;
+              }
+            }
+            return line;
+          })
+          .join('');
+
+        if (cleanedChunk) {
+          fullContent += cleanedChunk;
+
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantMessageId ? { ...m, content: fullContent } : m
+            )
+          );
+        }
+      }
+
+      // If no content was received, show a fallback message
+      if (!fullContent.trim()) {
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === assistantMessageId ? { ...m, content: fullContent } : m
+            m.id === assistantMessageId
+              ? { ...m, content: "I processed your request. Is there anything else I can help you with?" }
+              : m
           )
         );
       }
@@ -244,16 +303,26 @@ export function ChatWidget() {
                 <motion.div
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-end gap-2"
+                  className="flex items-start gap-2"
                 >
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                     <Bot className="h-4 w-4 text-primary" />
                   </div>
                   <div className="px-4 py-3 bg-muted rounded-2xl rounded-bl-md">
-                    <div className="flex gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.3s]"></span>
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:-0.15s]"></span>
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce"></span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce [animation-delay:-0.3s]"></span>
+                        <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce [animation-delay:-0.15s]"></span>
+                        <span className="h-2 w-2 rounded-full bg-primary/60 animate-bounce"></span>
+                      </div>
+                      <motion.span
+                        key={loadingText}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-xs text-muted-foreground ml-1"
+                      >
+                        {loadingText}
+                      </motion.span>
                     </div>
                   </div>
                 </motion.div>
